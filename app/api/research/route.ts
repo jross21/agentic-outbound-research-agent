@@ -19,11 +19,18 @@ function parseInput(body: unknown): RunInput | { error: string } {
   if (!domain) return { error: "A target account domain is required" };
   const personaId = typeof b.personaId === "string" ? b.personaId : "";
   if (!getPersona(personaId)) return { error: "Unknown persona" };
+  // A pasted ICP only takes effect in live mode; sample mode always uses the
+  // built-in sample ICP (the fit scorer ignores input.icpDefinition when scripted).
+  const icpDefinition =
+    researchMode() === "live" && typeof b.icpDefinition === "string" && b.icpDefinition.trim()
+      ? b.icpDefinition.trim()
+      : undefined;
   return {
     domain,
     accountName: typeof b.accountName === "string" && b.accountName.trim() ? b.accountName.trim() : undefined,
     trigger: typeof b.trigger === "string" && b.trigger.trim() ? b.trigger.trim() : undefined,
     personaId,
+    icpDefinition,
   };
 }
 

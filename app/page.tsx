@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import { ResearchForm } from "@/components/ResearchForm";
 import { SampleModeBanner } from "@/components/SampleModeBanner";
 import { AgentTrace } from "@/components/AgentTrace";
+import { FitPanel } from "@/components/FitPanel";
 import { EvidenceLedger } from "@/components/EvidenceLedger";
 import { SequenceEditor } from "@/components/SequenceEditor";
 import { GroundednessBadge } from "@/components/GroundednessBadge";
 import { ApprovalBar } from "@/components/ApprovalBar";
 import { FeedbackThumbs } from "@/components/FeedbackThumbs";
 import { useAgentRun } from "@/lib/useAgentRun";
+import { evidenceRoles } from "@/lib/evals/roles";
 import { SELLER, getPersona } from "@/lib/config";
 import type { Sequence } from "@/lib/types";
 import type { DemoAccount } from "@/lib/sample/registry";
@@ -19,14 +21,17 @@ export default function Home() {
   const [editable, setEditable] = useState<Sequence | null>(null);
   const [mode, setMode] = useState<"sample" | "live" | null>(null);
   const [demoAccounts, setDemoAccounts] = useState<DemoAccount[]>([]);
+  const [icp, setIcp] = useState("");
+  const [highlightedEvidenceId, setHighlightedEvidenceId] = useState<string | null>(null);
 
-  // Discover whether we're keyless (sample) or live, plus the demo accounts.
+  // Discover mode + demo accounts + the default ICP definition.
   useEffect(() => {
     fetch("/api/mode")
       .then((r) => r.json())
       .then((d) => {
         setMode(d.mode);
         setDemoAccounts(d.demoAccounts ?? []);
+        setIcp(d.icp ?? "");
       })
       .catch(() => setMode("sample"));
   }, []);
@@ -41,6 +46,11 @@ export default function Home() {
   const contact = research?.selectedContacts?.[0];
   const showForm = status === "idle" || status === "error";
   const sampleMode = mode === "sample";
+  const roles = research ? evidenceRoles(research) : undefined;
+  const highlight = {
+    highlightedEvidenceId,
+    onHighlightEvidence: setHighlightedEvidenceId,
+  };
 
   return (
     <main className="mx-auto w-full max-w-3xl px-5 py-12">
@@ -52,9 +62,10 @@ export default function Home() {
           Research an account → grounded, personalized outbound
         </h1>
         <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-          A transparent tool-use loop researches a target account, builds a{" "}
-          <span className="text-foreground">cited evidence ledger</span>, and drafts a
-          multi-touch sequence where every claim links to a source. Selling{" "}
+          A transparent tool-use loop researches a target account, grades it against your{" "}
+          <span className="text-foreground">ICP</span>, builds a{" "}
+          <span className="text-foreground">cited evidence ledger</span>, and drafts a multi-touch
+          sequence where every claim links back to a source. Selling{" "}
           <span className="text-foreground">{SELLER.product}</span> — {SELLER.oneLiner}.
         </p>
       </header>
@@ -63,7 +74,7 @@ export default function Home() {
 
       {showForm &&
         (mode ? (
-          <ResearchForm onRun={start} mode={mode} demoAccounts={demoAccounts} />
+          <ResearchForm onRun={start} mode={mode} demoAccounts={demoAccounts} icp={icp} />
         ) : (
           <p className="text-sm text-muted-foreground">Loading…</p>
         ))}
@@ -136,6 +147,11 @@ export default function Home() {
             )}
           </div>
 
+          {/* ICP fit */}
+          {research.fit && (
+            <FitPanel fit={research.fit} ledger={ledger} {...highlight} />
+          )}
+
           {/* Selected contact */}
           {contact && (
             <div className="rounded-xl border border-border bg-surface p-5 text-sm">
@@ -150,10 +166,10 @@ export default function Home() {
             </div>
           )}
 
-          <EvidenceLedger ledger={ledger} />
+          <EvidenceLedger ledger={ledger} roles={roles} {...highlight} />
 
           {editable && (
-            <SequenceEditor sequence={editable} ledger={ledger} onChange={setEditable} />
+            <SequenceEditor sequence={editable} ledger={ledger} onChange={setEditable} {...highlight} />
           )}
 
           {research && editable && (

@@ -13,5 +13,8 @@ describe("GET /api/mode", () => {
     expect(domains).toContain("acme-cloud.io");
     expect(domains).toContain("nimbus-health.com");
     expect(domains).toContain("ledgerflow.io");
+    // The default ICP definition is returned so the form can prefill / show it.
+    expect(typeof j.icp).toBe("string");
+    expect(j.icp.length).toBeGreaterThan(0);
   });
 });

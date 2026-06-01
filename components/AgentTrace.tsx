@@ -65,6 +65,20 @@ function Row({ event }: { event: ProgressEvent }) {
           <span className="text-warn">Step budget reached ({event.steps}).</span>
         </Line>
       );
+    case "fit_start":
+      return (
+        <Line color="var(--accent)">
+          <span className="font-medium text-foreground">Scoring ICP fit…</span>
+        </Line>
+      );
+    case "fit_scored":
+      return (
+        <Line color="var(--ok)">
+          <span className="text-muted-foreground">
+            ICP fit: <span className="text-foreground">{event.tier}</span> ({Math.round(event.score * 100)}%)
+          </span>
+        </Line>
+      );
     case "synthesis_start":
       return (
         <Line color="var(--accent)">

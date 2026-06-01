@@ -52,6 +52,7 @@ describe("POST /api/research — keyless scripted pipeline", () => {
 
     expect(events.some((e) => e.type === "tool_call")).toBe(true);
     expect(events.some((e) => e.type === "evidence_added")).toBe(true);
+    expect(events.some((e) => e.type === "fit_scored")).toBe(true);
     expect(events.some((e) => e.type === "synthesis_start")).toBe(true);
 
     const done = events.find((e) => e.type === "done");
@@ -60,6 +61,8 @@ describe("POST /api/research — keyless scripted pipeline", () => {
       expect(done.research.groundedness?.score).toBe(1);
       expect(done.research.sequence?.touches.length).toBeGreaterThanOrEqual(3);
       expect(done.research.firmographics?.name).toBe("Acme Cloud");
+      // ICP fit is scored as part of the run; Acme is a sweet-spot account.
+      expect(done.research.fit?.tier).toBe("strong");
     }
   });
 });

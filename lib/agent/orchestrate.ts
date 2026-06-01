@@ -9,6 +9,7 @@ import { runAgent } from "./loop";
 import { EvidenceLedger } from "./evidence";
 import { makeScriptedModel } from "./scripted";
 import { synthesize } from "@/lib/synthesis/synthesize";
+import { scoreFit } from "@/lib/synthesis/fit";
 import { resolveModelMode } from "@/lib/config";
 import { createMessage } from "@/lib/anthropic/client";
 import { buildCachedSystem } from "@/lib/anthropic/cache";
@@ -30,8 +31,13 @@ export async function* runResearch(
   // Re-yield every loop event and capture the grounded research it returns.
   const research = yield* runAgent({ input, createMessage: cm, system, ledger, signal });
 
+  // Qualify the account against the ICP first, then write the outreach.
+  yield { type: "fit_start" };
+  const scored = await scoreFit(research);
+  if (scored.fit) yield { type: "fit_scored", tier: scored.fit.tier, score: scored.fit.score };
+
   yield { type: "synthesis_start" };
-  const synthesized = await synthesize(research);
+  const synthesized = await synthesize(scored);
 
   yield { type: "done", research: synthesized };
   return synthesized;

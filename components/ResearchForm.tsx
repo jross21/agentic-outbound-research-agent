@@ -11,22 +11,25 @@ type Props = {
   /** "sample" → demo-account picker (keyless); "live" → free-text domain. */
   mode: "sample" | "live";
   demoAccounts: DemoAccount[];
+  /** Default ICP definition the account is scored against. */
+  icp: string;
 };
 
 const inputCls =
   "rounded-lg border border-border bg-surface-muted px-3 py-2 text-sm outline-none focus:border-accent";
 
-export function ResearchForm({ onRun, disabled, mode, demoAccounts }: Props) {
+export function ResearchForm({ onRun, disabled, mode, demoAccounts, icp }: Props) {
   const [personaId, setPersonaId] = useState(PERSONAS[0].id);
 
   // Sample mode: pick a fictional demo account.
   const [demoDomain, setDemoDomain] = useState(demoAccounts[0]?.domain ?? "");
   const selected = demoAccounts.find((a) => a.domain === demoDomain);
 
-  // Live mode: free-text.
+  // Live mode: free-text + a pasteable ICP (prefilled with the default).
   const [domain, setDomain] = useState("");
   const [accountName, setAccountName] = useState("");
   const [trigger, setTrigger] = useState("");
+  const [icpDefinition, setIcpDefinition] = useState(icp);
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -42,6 +45,7 @@ export function ResearchForm({ onRun, disabled, mode, demoAccounts }: Props) {
         accountName: accountName.trim() || undefined,
         trigger: trigger.trim() || undefined,
         personaId,
+        icpDefinition: icpDefinition.trim() || undefined,
       });
     }
   }
@@ -115,6 +119,17 @@ export function ResearchForm({ onRun, disabled, mode, demoAccounts }: Props) {
                 autoComplete="off"
               />
             </label>
+            <label className="flex flex-col gap-1.5 sm:col-span-2">
+              <span className="text-sm font-medium text-foreground">
+                ICP definition <span className="text-muted-foreground">(scored against — edit or paste your own)</span>
+              </span>
+              <textarea
+                value={icpDefinition}
+                onChange={(e) => setIcpDefinition(e.target.value)}
+                rows={6}
+                className={`${inputCls} resize-y font-mono text-xs`}
+              />
+            </label>
           </>
         )}
 
@@ -134,13 +149,24 @@ export function ResearchForm({ onRun, disabled, mode, demoAccounts }: Props) {
         </label>
       </div>
 
+      {mode === "sample" && icp && (
+        <details className="mt-4 rounded-lg border border-border bg-surface-muted p-3">
+          <summary className="cursor-pointer text-xs font-medium text-muted-foreground">
+            Scored against this sample ICP (read-only in demo mode)
+          </summary>
+          <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap text-[11px] leading-relaxed text-muted-foreground">
+            {icp}
+          </pre>
+        </details>
+      )}
+
       <div className="mt-6">
         <button
           type="submit"
           disabled={disabled || !canSubmit}
           className="rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-background transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-40"
         >
-          Research account
+          Research &amp; score account
         </button>
       </div>
     </form>

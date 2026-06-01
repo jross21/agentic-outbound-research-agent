@@ -5,9 +5,12 @@
 
 import { researchMode } from "@/lib/config";
 import { DEMO_ACCOUNTS } from "@/lib/sample/registry";
+import { loadIcp } from "@/lib/anthropic/prompts";
 
 export const runtime = "nodejs";
 
 export async function GET() {
-  return Response.json({ mode: researchMode(), demoAccounts: DEMO_ACCOUNTS });
+  // `icp` is the default ICP definition — the form prefills it (live) or shows
+  // it read-only (sample), so reviewers see exactly what fit is scored against.
+  return Response.json({ mode: researchMode(), demoAccounts: DEMO_ACCOUNTS, icp: loadIcp() });
 }
