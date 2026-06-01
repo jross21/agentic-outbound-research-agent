@@ -33,10 +33,10 @@ describe("enrich_domain (sample)", () => {
     expect(out.evidence.every((e) => e.provider === "enrichment")).toBe(true);
   });
 
-  it("works for an unknown domain via the generic fixture", async () => {
-    const out = await enrichDomainTool.sampleImpl({ domain: "totallyunknown.example" }, ctx("totallyunknown.example"));
-    expect(out.evidence.length).toBeGreaterThan(0);
-    out.evidence.forEach(assertWellFormedEvidence);
+  it("throws for an unknown (non-demo) domain — no fabrication fallback", async () => {
+    await expect(
+      enrichDomainTool.sampleImpl({ domain: "totallyunknown.example" }, ctx("totallyunknown.example"))
+    ).rejects.toThrow();
   });
 });
 

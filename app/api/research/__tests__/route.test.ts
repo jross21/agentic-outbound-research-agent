@@ -38,6 +38,13 @@ describe("POST /api/research — keyless scripted pipeline", () => {
     expect(r.status).toBe(400);
   });
 
+  it("returns 400 for a non-demo domain in sample mode (no fabrication)", async () => {
+    const r = await POST(req({ domain: "totally-real-co.example", personaId: "rev-ops" }));
+    expect(r.status).toBe(400);
+    const j = await r.json();
+    expect(j.error).toMatch(/demo account/i);
+  });
+
   it("streams a grounded run ending in a done event", async () => {
     const r = await POST(req({ domain: "acme-cloud.io", personaId: "rev-ops" }));
     expect(r.status).toBe(200);

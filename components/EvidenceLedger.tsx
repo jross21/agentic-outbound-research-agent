@@ -32,14 +32,22 @@ export function EvidenceLedger({ ledger }: { ledger: EvidenceEntry[] }) {
             </span>
             <div className="min-w-0 flex-1">
               <p className="text-foreground">{e.claim}</p>
-              <a
-                href={e.sourceUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-0.5 inline-block truncate text-xs text-accent hover:underline"
-              >
-                {e.sourceUrl}
-              </a>
+              <div className="mt-0.5 flex items-center gap-2">
+                <span
+                  className="shrink-0 text-[10px] font-medium uppercase tracking-wide"
+                  style={{ color: PROVIDER_COLOR[e.provider] }}
+                >
+                  {e.provider}
+                </span>
+                <a
+                  href={e.sourceUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="truncate text-xs text-accent hover:underline"
+                >
+                  {e.sourceUrl}
+                </a>
+              </div>
             </div>
           </li>
         ))}

@@ -45,8 +45,8 @@ describe("synthesize — scripted, keyless", () => {
     }
   });
 
-  it("works for an unknown domain via the generic fixture", async () => {
-    const r = await research("brandnew.example", "vp-revenue");
+  it("works across the curated demo accounts (e.g. Nimbus Health)", async () => {
+    const r = await research("nimbus-health.com", "vp-revenue");
     const out = await synthesize(r);
     expect(out.groundedness?.score).toBe(1);
     expect(out.sequence?.touches.length).toBeGreaterThanOrEqual(3);

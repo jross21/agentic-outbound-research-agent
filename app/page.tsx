@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ResearchForm } from "@/components/ResearchForm";
+import { SampleModeBanner } from "@/components/SampleModeBanner";
 import { AgentTrace } from "@/components/AgentTrace";
 import { EvidenceLedger } from "@/components/EvidenceLedger";
 import { SequenceEditor } from "@/components/SequenceEditor";
@@ -11,10 +12,24 @@ import { FeedbackThumbs } from "@/components/FeedbackThumbs";
 import { useAgentRun } from "@/lib/useAgentRun";
 import { SELLER, getPersona } from "@/lib/config";
 import type { Sequence } from "@/lib/types";
+import type { DemoAccount } from "@/lib/sample/registry";
 
 export default function Home() {
   const { status, trace, ledger, research, error, start, reset } = useAgentRun();
   const [editable, setEditable] = useState<Sequence | null>(null);
+  const [mode, setMode] = useState<"sample" | "live" | null>(null);
+  const [demoAccounts, setDemoAccounts] = useState<DemoAccount[]>([]);
+
+  // Discover whether we're keyless (sample) or live, plus the demo accounts.
+  useEffect(() => {
+    fetch("/api/mode")
+      .then((r) => r.json())
+      .then((d) => {
+        setMode(d.mode);
+        setDemoAccounts(d.demoAccounts ?? []);
+      })
+      .catch(() => setMode("sample"));
+  }, []);
 
   // Sync the editable sequence whenever a fresh research result lands.
   useEffect(() => {
@@ -25,6 +40,7 @@ export default function Home() {
   const f = research?.firmographics;
   const contact = research?.selectedContacts?.[0];
   const showForm = status === "idle" || status === "error";
+  const sampleMode = mode === "sample";
 
   return (
     <main className="mx-auto w-full max-w-3xl px-5 py-12">
@@ -43,12 +59,14 @@ export default function Home() {
         </p>
       </header>
 
-      {showForm && (
-        <ResearchForm
-          onRun={start}
-          onLoadSample={() => start({ domain: "acme-cloud.io", personaId: "rev-ops" })}
-        />
-      )}
+      {sampleMode && <SampleModeBanner />}
+
+      {showForm &&
+        (mode ? (
+          <ResearchForm onRun={start} mode={mode} demoAccounts={demoAccounts} />
+        ) : (
+          <p className="text-sm text-muted-foreground">Loading…</p>
+        ))}
 
       {error && (
         <div className="mt-4 rounded-lg border border-bad/40 bg-surface p-4 text-sm text-bad">
@@ -83,7 +101,18 @@ export default function Home() {
           {/* Firmographics + POV */}
           <div className="rounded-xl border border-border bg-surface p-5">
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-lg font-semibold">{f?.name ?? research.input.domain}</h2>
+              <div className="flex items-center gap-2">
+                <h2 className="text-lg font-semibold">{f?.name ?? research.input.domain}</h2>
+                {sampleMode && (
+                  <span
+                    className="rounded px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-warn"
+                    style={{ border: "1px solid var(--warn)" }}
+                    title="Fictional sample data — not real research"
+                  >
+                    Sample
+                  </span>
+                )}
+              </div>
               {research.groundedness && <GroundednessBadge report={research.groundedness} />}
             </div>
             {f && (
@@ -111,7 +140,7 @@ export default function Home() {
           {contact && (
             <div className="rounded-xl border border-border bg-surface p-5 text-sm">
               <h2 className="mb-2 text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                Selected contact
+                Selected contact{sampleMode ? " (fictional)" : ""}
               </h2>
               <p className="text-foreground">
                 <span className="font-medium">{contact.name}</span> — {contact.title}
@@ -128,7 +157,7 @@ export default function Home() {
           )}
 
           {research && editable && (
-            <ApprovalBar research={research} sequence={editable} />
+            <ApprovalBar research={research} sequence={editable} sampleMode={sampleMode} />
           )}
 
           <div className="flex justify-end">

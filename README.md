@@ -4,7 +4,7 @@
 
 An autonomous GTM agent that researches a target account through a **transparent, hand-rolled tool-use loop**, builds a **cited evidence ledger**, and drafts a personalized multi-touch outbound sequence where **every claim links to a source** — then waits for **human approval** before anything is enrolled.
 
-Built to demonstrate agentic systems for a GTM-engineering portfolio: a real plan → act → evaluate loop (not a single-shot LLM call), an anti-hallucination citation layer, and a production-shaped approval workflow. Runs **fully keyless** for reviewers.
+Built to demonstrate agentic systems for a GTM-engineering portfolio: a real plan → act → evaluate loop (not a single-shot LLM call), an anti-hallucination citation layer, and a production-shaped approval workflow. Runs **fully keyless** for reviewers — in that mode it operates on a small set of **clearly-labeled fictional demo accounts** (a real demo, not real research). Add keys for live research on real domains.
 
 > Selling a (fictional) product, **Signalform** — *a product-signal platform that unifies product-usage data and CRM records so revenue teams act on the same buying signals.* Retarget the agent by editing `SELLER` in `lib/config.ts`.
 
@@ -16,7 +16,7 @@ npm run generate-sample   # writes deterministic fixtures to data/sample/
 npm run dev               # http://localhost:3000
 ```
 
-Then click **Load sample account** (or enter any domain), and watch:
+Then **pick one of the fictional demo accounts** (Acme Cloud, Nimbus Health, or Ledgerflow) and watch:
 
 1. the **agent trace** stream live as it enriches firmographics, searches, fetches pages, finds contacts, and checks CRM history;
 2. the **evidence ledger** fill with cited facts (each with a clickable source);
@@ -24,7 +24,11 @@ Then click **Load sample account** (or enter any domain), and watch:
 4. a **groundedness score** (% of claims cited);
 5. **Approve & enroll** → the dry-run sequencer writes the exact enrollment payload to `data/out/`.
 
-With no `ANTHROPIC_API_KEY`, the loop is driven by a deterministic **scripted model** that replays a realistic research plan against the sample tools — so the entire experience (streaming, ledger, synthesis, approval, dry-run enroll) works with zero keys. Add keys to switch on the real model and live integrations.
+### Sample mode vs. live mode
+
+With no `ANTHROPIC_API_KEY` the app is in **sample mode**: a deterministic **scripted model** replays a realistic research plan against canned fixtures, so the entire experience (streaming, ledger, synthesis, approval, dry-run enroll) works with zero keys. The catch — and the reason the UI says so loudly with a banner and a `SAMPLE` badge — is that the companies, people, and LinkedIn URLs are **fictional and illustrative only**; they won't resolve. Sample mode deliberately supports **only the three curated demo accounts** and refuses arbitrary domains, rather than fabricating plausible-but-fake data for a real company (that would be exactly the hallucination this tool exists to prevent).
+
+Set `ANTHROPIC_API_KEY` (+ provider keys) for **live mode**: the real Claude loop runs and can research any domain. See the table below for what's wired today.
 
 ## How it works
 
@@ -49,18 +53,20 @@ ResearchForm ─POST /api/research─▶ orchestrate.runResearch ──▶ NDJSO
 
 ## Live mode (optional)
 
-Every external capability has a live impl behind the same interface, gated by an env var (see `.env.example`). Without the key, it falls back to sample data — the app degrades gracefully and always runs.
+Every external capability sits behind one interface with a live impl and a sample impl, gated by an env var (see `.env.example`).
 
-| Capability | Live provider | Env var |
-|---|---|---|
-| Model / agent loop | Anthropic (Claude) | `ANTHROPIC_API_KEY` |
-| `web_search` | Serper | `SEARCH_API_KEY` |
-| `fetch_page` | real HTTP + HTML→text | (uses `SEARCH_API_KEY` to enable the live research path) |
-| `enrich_domain`, `find_contacts` | provider stub (wire your own) | `ENRICHMENT_API_KEY` |
-| `crm_read` | HubSpot (deferred) | `HUBSPOT_ACCESS_TOKEN` |
-| Sequencer | dry-run (default) / HubSpot / Apollo | `SEQUENCER`, `HUBSPOT_ACCESS_TOKEN`, `APOLLO_API_KEY` |
+| Capability | Live provider | Env var | Status |
+|---|---|---|---|
+| Model / agent loop | Anthropic (Claude) | `ANTHROPIC_API_KEY` | ✅ wired |
+| `web_search` | Serper | `SEARCH_API_KEY` | ✅ wired |
+| `fetch_page` | real HTTP + HTML→text | (enabled by `SEARCH_API_KEY`) | ✅ wired |
+| `enrich_domain`, `find_contacts` | your provider (Apollo/Clay/…) | `ENRICHMENT_API_KEY` | ⛔ **stub** — throws until you wire the provider call |
+| `crm_read` | HubSpot | `HUBSPOT_ACCESS_TOKEN` | ⛔ **stub** — not implemented yet |
+| Sequencer | dry-run (default) / HubSpot / Apollo | `SEQUENCER`, `HUBSPOT_ACCESS_TOKEN`, `APOLLO_API_KEY` | dry-run wired; HubSpot/Apollo best-effort |
 
-`FORCE_SAMPLE=1` forces everything keyless regardless of which keys are set (used in tests and demos).
+**Honest status:** live mode today does real web research (`web_search` + `fetch_page`) but **not** real people-enrichment — `enrich_domain`/`find_contacts`/`crm_read` are stubs to be wired to a provider. That's the main thing to build next.
+
+`FORCE_SAMPLE=1` forces sample mode regardless of which keys are set (used in tests and demos).
 
 Prompt caching: the static system prefix (agent prompt + `playbook/OUTBOUND_PLAYBOOK.md`) is sent as a `cache_control: ephemeral` block, so it's cached across every loop turn and synthesis call.
 
