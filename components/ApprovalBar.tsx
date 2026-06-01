@@ -5,9 +5,9 @@ import type { AccountResearch, Sequence } from "@/lib/types";
 import type { EnrollmentPayload, EnrollmentResult } from "@/lib/sequencer/base";
 import { scoreGroundedness } from "@/lib/evals/groundedness";
 
-type Props = { research: AccountResearch; sequence: Sequence };
+type Props = { research: AccountResearch; sequence: Sequence; sampleMode?: boolean };
 
-export function ApprovalBar({ research, sequence }: Props) {
+export function ApprovalBar({ research, sequence, sampleMode }: Props) {
   const [confirmed, setConfirmed] = useState(false);
   const [status, setStatus] = useState<"idle" | "submitting" | "done" | "error">("idle");
   const [result, setResult] = useState<EnrollmentResult | null>(null);
@@ -77,6 +77,14 @@ export function ApprovalBar({ research, sequence }: Props) {
         cited before pushing to the sequencer.
       </p>
 
+      {sampleMode && (
+        <p className="mt-2 rounded-md border border-warn/30 bg-surface-muted p-2 text-xs text-warn">
+          Sample mode: these are fictional contacts and this is a dry-run — nothing is
+          contacted. The payload is written to <code className="font-mono">data/out/</code> so you
+          can inspect exactly what a live push would send.
+        </p>
+      )}
+
       {blocked && (
         <p className="mt-3 rounded-md border border-bad/40 bg-surface-muted p-2 text-xs text-bad">
           {grounded.uncited.length} uncited claim(s) detected — fix or remove them before enrolling.
@@ -100,7 +108,11 @@ export function ApprovalBar({ research, sequence }: Props) {
         disabled={!confirmed || blocked || status === "submitting"}
         className="mt-4 rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-background transition-colors hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-40"
       >
-        {status === "submitting" ? "Enrolling…" : "Approve & enroll"}
+        {status === "submitting"
+          ? "Enrolling…"
+          : sampleMode
+            ? "Approve & enroll (dry-run)"
+            : "Approve & enroll"}
       </button>
     </div>
   );

@@ -147,6 +147,15 @@ export function resolveModelMode(): "live" | "scripted" {
   return hasAnthropicKey() && !isForceSample() ? "live" : "scripted";
 }
 
+/**
+ * UI-facing mode. "live" only when a real model will run (real research on any
+ * domain); otherwise "sample" — the keyless demo over the fictional curated
+ * accounts. The client uses this to label the run and gate the input.
+ */
+export function researchMode(): "live" | "sample" {
+  return resolveModelMode() === "live" ? "live" : "sample";
+}
+
 export type Provider = "search" | "enrichment" | "crm" | "apollo";
 
 const PROVIDER_ENV: Record<Provider, string> = {

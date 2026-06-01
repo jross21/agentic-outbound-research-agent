@@ -6,7 +6,8 @@
 
 import { runResearch } from "@/lib/agent/orchestrate";
 import type { RunInput } from "@/lib/types";
-import { getPersona } from "@/lib/config";
+import { getPersona, researchMode } from "@/lib/config";
+import { DEMO_ACCOUNTS, isDemoAccount } from "@/lib/sample/registry";
 
 export const runtime = "nodejs"; // need fs (prompts/playbook) + a long-ish run
 export const maxDuration = 300; // extend the serverless budget for live runs
@@ -30,6 +31,20 @@ export async function POST(request: Request) {
   const parsed = parseInput(await request.json().catch(() => null));
   if ("error" in parsed) {
     return Response.json({ error: parsed.error }, { status: 400 });
+  }
+
+  // In sample (keyless) mode there is no real research — only the curated,
+  // fictional demo accounts have data. Reject anything else up front so we never
+  // fabricate results for a real domain.
+  if (researchMode() === "sample" && !isDemoAccount(parsed.domain)) {
+    return Response.json(
+      {
+        error: `Sample mode supports only the built-in demo accounts (${DEMO_ACCOUNTS.map(
+          (a) => a.domain
+        ).join(", ")}). Set ANTHROPIC_API_KEY to run live research on any domain.`,
+      },
+      { status: 400 }
+    );
   }
 
   const encoder = new TextEncoder();
