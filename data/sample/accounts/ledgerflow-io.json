@@ -1,0 +1,95 @@
+{
+  "domain": "ledgerflow.io",
+  "firmographics": {
+    "name": "Ledgerflow",
+    "domain": "ledgerflow.io",
+    "industry": "Fintech",
+    "employeeCount": 340,
+    "hqLocation": "New York, NY (hybrid)",
+    "fundingStage": "Series B",
+    "description": "Embedded payments and double-entry ledger APIs for vertical SaaS platforms."
+  },
+  "documents": [
+    {
+      "url": "https://ledgerflow.io/about",
+      "title": "About Ledgerflow",
+      "snippet": "Ledgerflow is a 340-person fintech providing embedded payments and double-entry ledger APIs to vertical SaaS platforms.",
+      "body": "Ledgerflow provides embedded payments and double-entry ledger APIs that vertical SaaS platforms use to move and reconcile money. The company employs 340 people and is based in New York with a hybrid work model.",
+      "topics": [
+        "company"
+      ]
+    },
+    {
+      "url": "https://ledgerflow.io/blog/series-b",
+      "title": "Ledgerflow raises $48M Series B",
+      "snippet": "Ledgerflow raised a $48M Series B led by Andreessen Horowitz in January 2026.",
+      "body": "Ledgerflow announced a $48M Series B led by Andreessen Horowitz in January 2026, to be used for product expansion and growing its revenue team.",
+      "topics": [
+        "funding",
+        "growth"
+      ]
+    },
+    {
+      "url": "https://ledgerflow.io/blog/real-time-reconciliation",
+      "title": "Launching real-time reconciliation",
+      "snippet": "Ledgerflow launched a real-time reconciliation product in May 2026 aimed at customer finance teams.",
+      "body": "In May 2026 Ledgerflow launched a real-time reconciliation product. The launch broadens the buyer set beyond engineering to include finance and operations leaders at customer companies.",
+      "topics": [
+        "launch",
+        "product"
+      ]
+    },
+    {
+      "url": "https://ledgerflow.io/careers",
+      "title": "Careers — Ledgerflow",
+      "snippet": "Ledgerflow recently hired its first VP of Revenue Operations and is expanding its revenue team.",
+      "body": "Ledgerflow recently hired its first VP of Revenue Operations and lists multiple open roles across sales and customer success, signaling a build-out of its go-to-market function.",
+      "topics": [
+        "hiring",
+        "revops"
+      ]
+    },
+    {
+      "url": "https://ledgerflow.io/blog/data-stack",
+      "title": "Our data stack",
+      "snippet": "Ledgerflow runs its data stack on BigQuery and dbt.",
+      "body": "Ledgerflow's engineering team details running analytics on BigQuery with dbt for transformations, consolidating product and billing data for internal reporting.",
+      "topics": [
+        "data",
+        "warehouse"
+      ]
+    }
+  ],
+  "contacts": [
+    {
+      "name": "Marcus Lee",
+      "title": "VP Revenue Operations",
+      "email": "marcus.lee@ledgerflow.io",
+      "linkedinUrl": "https://www.linkedin.com/in/marcuslee-revops"
+    },
+    {
+      "name": "Dana Foster",
+      "title": "Chief Revenue Officer",
+      "email": "dana.foster@ledgerflow.io",
+      "linkedinUrl": "https://www.linkedin.com/in/danafoster-cro"
+    },
+    {
+      "name": "Arjun Patel",
+      "title": "VP Product",
+      "email": "arjun.patel@ledgerflow.io",
+      "linkedinUrl": "https://www.linkedin.com/in/arjunpatel-product"
+    }
+  ],
+  "crm": {
+    "owner": "Julian Ross",
+    "lifecycleStage": "Subscriber",
+    "lastContacted": "2026-04-02",
+    "priorTouches": [
+      {
+        "date": "2026-04-02",
+        "type": "newsletter",
+        "note": "Marcus Lee subscribed to the RevOps newsletter."
+      }
+    ]
+  }
+}

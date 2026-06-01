@@ -1,0 +1,74 @@
+{
+  "domain": "nimbus-health.com",
+  "firmographics": {
+    "name": "Nimbus Health",
+    "domain": "nimbus-health.com",
+    "industry": "Healthtech",
+    "employeeCount": 880,
+    "hqLocation": "Boston, MA",
+    "fundingStage": "Series C",
+    "description": "Virtual care platform connecting patients with clinicians across all 50 states."
+  },
+  "documents": [
+    {
+      "url": "https://nimbus-health.com/company",
+      "title": "Company — Nimbus Health",
+      "snippet": "Nimbus Health employs 880 people and serves patients across all 50 states through its virtual care platform.",
+      "body": "Nimbus Health is a virtual care platform headquartered in Boston. The company employs 880 people and connects patients with licensed clinicians across all 50 states.",
+      "topics": [
+        "company"
+      ]
+    },
+    {
+      "url": "https://www.businesswire.com/news/nimbus-health-series-c",
+      "title": "Nimbus Health closes $120M Series C",
+      "snippet": "Nimbus Health closed a $120M Series C in April 2026 to scale its commercial organization.",
+      "body": "Nimbus Health announced a $120M Series C in April 2026. The company said the round will fund scaling its commercial and revenue organization as it moves upmarket toward enterprise health systems.",
+      "topics": [
+        "funding",
+        "growth"
+      ]
+    },
+    {
+      "url": "https://nimbus-health.com/newsroom/new-cro",
+      "title": "Nimbus Health names new Chief Revenue Officer",
+      "snippet": "Nimbus Health appointed former Veeva executive Rachel Adler as Chief Revenue Officer in April 2026.",
+      "body": "Nimbus Health appointed Rachel Adler, previously a commercial leader at Veeva, as Chief Revenue Officer in April 2026. Adler is tasked with building a repeatable enterprise go-to-market motion.",
+      "topics": [
+        "leadership",
+        "hiring"
+      ]
+    },
+    {
+      "url": "https://nimbus-health.com/newsroom/2025-results",
+      "title": "2025 in review",
+      "snippet": "Nimbus Health reported 130% net revenue retention in 2025, driven by expansion within enterprise health systems.",
+      "body": "Nimbus Health reported 130% net revenue retention for 2025. The company attributes the result to expansion within existing enterprise health-system accounts and notes growing reliance on product-usage signals to time those expansions.",
+      "topics": [
+        "product",
+        "retention"
+      ]
+    }
+  ],
+  "contacts": [
+    {
+      "name": "Rachel Adler",
+      "title": "Chief Revenue Officer",
+      "email": "rachel.adler@nimbus-health.com",
+      "linkedinUrl": "https://www.linkedin.com/in/racheladler-cro"
+    },
+    {
+      "name": "Tomás Vega",
+      "title": "VP Revenue Operations",
+      "email": "tomas.vega@nimbus-health.com",
+      "linkedinUrl": "https://www.linkedin.com/in/tomasvega-revops"
+    },
+    {
+      "name": "Hannah Brooks",
+      "title": "VP Product",
+      "email": "hannah.brooks@nimbus-health.com",
+      "linkedinUrl": "https://www.linkedin.com/in/hannahbrooks-product"
+    }
+  ],
+  "crm": null
+}

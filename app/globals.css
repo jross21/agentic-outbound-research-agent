@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+:root {
+  /* Surfaces */
+  --background: #0b1020; /* deep navy */
+  --surface: #111729;
+  --surface-muted: #1a2236;
+  --foreground: #e6ebf5;
+  --muted-foreground: #93a1bd;
+  --border: #243049;
+
+  /* Accent (cyan → indigo) */
+  --accent: #22d3ee; /* cyan-400 */
+  --accent-hover: #06b6d4; /* cyan-500 */
+  --accent-soft: #0e2a33;
+
+  /* Semantic */
+  --ok: #34d399; /* emerald-400 */
+  --warn: #fbbf24; /* amber-400 */
+  --bad: #f87171; /* red-400 */
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-bad: var(--bad);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Entrance animation for streamed trace rows + result sections */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.3s ease-out both;
+}
+
+/* Pulsing dot for the live "agent is working" indicator */
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.animate-pulse-dot {
+  animation: pulse-dot 1.1s ease-in-out infinite;
+}
