@@ -19,10 +19,11 @@ npm run dev               # http://localhost:3000
 Then **pick one of the fictional demo accounts** (Acme Cloud, Nimbus Health, or Ledgerflow) and watch:
 
 1. the **agent trace** stream live as it enriches firmographics, searches, fetches pages, finds contacts, and checks CRM history;
-2. the **evidence ledger** fill with cited facts (each with a clickable source);
-3. a **why-you / why-now POV**, a selected contact, and an **editable multi-touch sequence**, each touch tagged with the evidence it cites;
-4. a **groundedness score** (% of claims cited);
-5. **Approve & enroll** → the dry-run sequencer writes the exact enrollment payload to `data/out/`.
+2. an **ICP fit score** — the account graded *strong / moderate / weak / no-fit* against the ICP, with the research points that support or weaken fit, each cited;
+3. the **evidence ledger** fill with cited facts (each with a clickable source), badged `★ fit` / `✉ in outreach`;
+4. a **why-you / why-now POV**, a selected contact, and an **editable multi-touch sequence** whose personalization points link back to the research — hover a citation to highlight the exact evidence row (and vice-versa);
+5. a **groundedness score** (% of claims cited);
+6. **Approve & enroll** → the dry-run sequencer writes the exact enrollment payload to `data/out/`.
 
 ### Sample mode vs. live mode
 
@@ -50,6 +51,13 @@ ResearchForm ─POST /api/research─▶ orchestrate.runResearch ──▶ NDJSO
 - **The evidence ledger** (`lib/agent/evidence.ts`) is append-only. Tools return the facts they gather; the loop ledgers them. Synthesized outreach may cite only ledger ids.
 - **Citation enforcement** (`lib/evals/groundedness.ts`) is deterministic and runs *after* synthesis and *again* at the approval gate. The model proposes citations; this code verifies them against the ledger and drops fabrications. Uncited claims are flagged and **block enrollment**.
 - **The approval gate** (`app/api/approve/route.ts`) is the only path to a sequencer. It requires `approved: true` and re-checks groundedness server-side — the client cannot bypass it.
+
+## ICP fit & traceability
+
+The evidence ledger is the hub that ties **research → fit → personalization** together:
+
+- **ICP fit-scoring** (`lib/synthesis/fit.ts`) grades the account against an ICP definition — pasted into the form in live mode, or the bundled `icp/ICP.md` in sample mode. It returns a tier + score + supporting/weakening signals, each **cited to the ledger**. It follows the same "model proposes → code verifies citations" discipline as groundedness, and runs deterministically in keyless mode (scored against the structured `SELLER.icp`). Fit is informational — it does not gate enrollment.
+- **Traceability** — every sequence touch's personalization is bound to the evidence it cites (`Touch.claims[].evidenceIds`). In the review UI, hovering a citation highlights the exact research point in the ledger and vice-versa, and ledger rows are badged `★ fit` (drove the fit score) / `✉ in outreach` (used in the sequence). So you can see precisely which research justified each line of the email and the qualification.
 
 ## Live mode (optional)
 

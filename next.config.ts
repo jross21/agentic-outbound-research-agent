@@ -10,8 +10,10 @@ const nextConfig: NextConfig = {
     "/api/research": [
       "./prompts/**/*.md",
       "./playbook/**/*.md",
+      "./icp/**/*.md",
       "./data/sample/**/*.json",
     ],
+    "/api/mode": ["./icp/**/*.md"],
   },
 };
 

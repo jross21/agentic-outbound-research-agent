@@ -13,6 +13,8 @@ export type ProgressEvent =
   | { type: "evidence_added"; entry: EvidenceEntry }
   | { type: "tool_error"; step: number; name: string; error: string }
   | { type: "budget_exhausted"; steps: number }
+  | { type: "fit_start" }
+  | { type: "fit_scored"; tier: string; score: number }
   | { type: "synthesis_start" }
   | { type: "synthesis_progress"; label: string }
   | { type: "final_text"; text: string }

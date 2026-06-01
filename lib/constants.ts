@@ -21,6 +21,9 @@ export const MAX_LOOP_TOKENS = 2048;
 /** max_tokens for synthesis calls (POV / sequence are larger structured JSON). */
 export const MAX_SYNTHESIS_TOKENS = 2048;
 
+/** max_tokens for the ICP fit-scoring call (score + tier + cited signals). */
+export const MAX_FIT_TOKENS = 1024;
+
 /** Per-request timeout (ms) for live tool HTTP calls (search / fetch / enrich). */
 export const TOOL_HTTP_TIMEOUT_MS = 12_000;
 
@@ -32,6 +35,7 @@ export const GROUNDEDNESS_MIN = 1.0;
 export const PROJECT_ROOT = process.cwd();
 export const PROMPTS_DIR = path.join(PROJECT_ROOT, "prompts");
 export const PLAYBOOK_PATH = path.join(PROJECT_ROOT, "playbook", "OUTBOUND_PLAYBOOK.md");
+export const ICP_PATH = path.join(PROJECT_ROOT, "icp", "ICP.md");
 export const SAMPLE_DIR = path.join(PROJECT_ROOT, "data", "sample");
 export const SAMPLE_ACCOUNTS_DIR = path.join(SAMPLE_DIR, "accounts");
 export const OUT_DIR = path.join(PROJECT_ROOT, "data", "out");

@@ -7,14 +7,42 @@ type Props = {
   ledger: EvidenceEntry[];
   onChange: (sequence: Sequence) => void;
   disabled?: boolean;
+  highlightedEvidenceId?: string | null;
+  onHighlightEvidence?: (id: string | null) => void;
 };
 
-export function SequenceEditor({ sequence, ledger, onChange, disabled }: Props) {
+export function SequenceEditor({
+  sequence,
+  ledger,
+  onChange,
+  disabled,
+  highlightedEvidenceId,
+  onHighlightEvidence,
+}: Props) {
   const byId = new Map(ledger.map((e) => [e.id, e]));
 
   function updateTouch(i: number, patch: Partial<Touch>) {
     const touches = sequence.touches.map((t, idx) => (idx === i ? { ...t, ...patch } : t));
     onChange({ ...sequence, touches });
+  }
+
+  function Chip({ id }: { id: string }) {
+    const e = byId.get(id);
+    return (
+      <a
+        href={e?.sourceUrl ?? "#"}
+        target="_blank"
+        rel="noreferrer"
+        title={e?.claim ?? id}
+        onMouseEnter={() => onHighlightEvidence?.(id)}
+        onMouseLeave={() => onHighlightEvidence?.(null)}
+        className={`rounded px-1.5 py-0.5 font-mono text-[11px] hover:underline ${
+          highlightedEvidenceId === id ? "bg-accent text-background" : "bg-surface text-ok"
+        }`}
+      >
+        {id}
+      </a>
+    );
   }
 
   return (
@@ -23,8 +51,8 @@ export function SequenceEditor({ sequence, ledger, onChange, disabled }: Props) 
         Outbound sequence
       </h2>
       <p className="mb-4 text-xs text-muted-foreground">
-        Editable. Each touch lists the cited evidence it leans on — edit freely; the
-        approval gate re-checks grounding before anything is enrolled.
+        Editable. Each personalization point links to the research it cites — hover a citation to
+        trace it in the evidence ledger. The approval gate re-checks grounding before enrollment.
       </p>
 
       <div className="flex flex-col gap-4">
@@ -56,30 +84,28 @@ export function SequenceEditor({ sequence, ledger, onChange, disabled }: Props) 
               className="w-full resize-y rounded-md border border-border bg-surface px-2.5 py-1.5 text-sm leading-relaxed outline-none focus:border-accent disabled:opacity-60"
             />
 
-            {t.claims.length > 0 && (
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                {t.claims.flatMap((c) =>
-                  c.evidenceIds.map((id) => {
-                    const e = byId.get(id);
-                    return (
-                      <a
-                        key={`${id}-${c.text.slice(0, 8)}`}
-                        href={e?.sourceUrl ?? "#"}
-                        target="_blank"
-                        rel="noreferrer"
-                        title={e?.claim ?? id}
-                        className="rounded bg-surface px-1.5 py-0.5 font-mono text-[11px] text-ok hover:underline"
-                      >
-                        {id}
-                      </a>
-                    );
-                  })
-                )}
-                {t.claims.every((c) => c.evidenceIds.length === 0) && (
-                  <span className="text-[11px] text-bad">⚠ no citation — will be blocked</span>
-                )}
-              </div>
-            )}
+            {/* Personalization → research: each cited point with its evidence */}
+            <div className="mt-3 border-t border-border pt-2">
+              <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                Personalization &amp; sources
+              </p>
+              {t.claims.length === 0 ? (
+                <p className="text-[11px] text-muted-foreground">No personalization claims on this touch.</p>
+              ) : (
+                <ul className="flex flex-col gap-1.5">
+                  {t.claims.map((c, ci) => (
+                    <li key={ci} className="flex flex-wrap items-center gap-1.5 text-xs">
+                      <span className="text-muted-foreground">{c.text}</span>
+                      {c.evidenceIds.length > 0 ? (
+                        c.evidenceIds.map((id) => <Chip key={id} id={id} />)
+                      ) : (
+                        <span className="text-bad">⚠ no citation — will be blocked</span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
         ))}
       </div>

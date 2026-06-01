@@ -25,6 +25,9 @@ export type RunInput = {
   accountName?: string; // optional display name override
   trigger?: string; // optional signal hint from the user ("just raised a Series B")
   personaId: string;
+  /** ICP definition to grade the account against (live mode; pasted text).
+   *  Omitted ⇒ the default/sample ICP is used. */
+  icpDefinition?: string;
 };
 
 /** Where a piece of evidence came from. */
@@ -102,12 +105,32 @@ export type GroundednessReport = {
   uncited: string[]; // claim texts lacking a valid ledger citation
 };
 
+/** How well the account matches the ICP. */
+export type FitTier = "strong" | "moderate" | "weak" | "no-fit";
+
+/** One reason the account does or doesn't fit, cited to the ledger. Unlike an
+ *  outreach claim, a fit signal MAY be uncited (e.g. an ICP gap with no evidence). */
+export type FitSignal = {
+  text: string;
+  polarity: "supports" | "against";
+  evidenceIds: string[];
+};
+
+export type FitReport = {
+  score: number; // 0..1
+  tier: FitTier;
+  rationale: string;
+  signals: FitSignal[];
+  icpSource: "sample" | "custom"; // default ICP vs. a pasted one
+};
+
 /** The full artifact a run produces. */
 export type AccountResearch = {
   input: RunInput;
   firmographics?: Firmographics;
   contacts: Contact[];
   ledger: EvidenceEntry[];
+  fit?: FitReport;
   pov?: Pov;
   selectedContacts?: SelectedContact[];
   sequence?: Sequence;
