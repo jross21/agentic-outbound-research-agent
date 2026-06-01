@@ -1,5 +1,7 @@
 # Outbound Research Agent
 
+[![CI](https://github.com/jross21/agentic-outbound-research-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/jross21/agentic-outbound-research-agent/actions/workflows/ci.yml)
+
 An autonomous GTM agent that researches a target account through a **transparent, hand-rolled tool-use loop**, builds a **cited evidence ledger**, and drafts a personalized multi-touch outbound sequence where **every claim links to a source** — then waits for **human approval** before anything is enrolled.
 
 Built to demonstrate agentic systems for a GTM-engineering portfolio: a real plan → act → evaluate loop (not a single-shot LLM call), an anti-hallucination citation layer, and a production-shaped approval workflow. Runs **fully keyless** for reviewers.
