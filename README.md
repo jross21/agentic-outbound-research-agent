@@ -4,7 +4,7 @@
 
 An autonomous GTM agent that researches a target account through a **transparent, hand-rolled tool-use loop**, builds a **cited evidence ledger**, and drafts a personalized multi-touch outbound sequence where **every claim links to a source** — then waits for **human approval** before anything is enrolled.
 
-Built to demonstrate agentic systems for a GTM-engineering portfolio: a real plan → act → evaluate loop (not a single-shot LLM call), an anti-hallucination citation layer, and a production-shaped approval workflow. Runs **fully keyless** for reviewers — in that mode it operates on a small set of **clearly-labeled fictional demo accounts** (a real demo, not real research). Add keys for live research on real domains.
+Built to demonstrate agentic systems for a GTM-engineering portfolio: a real plan → act → evaluate loop (not a single-shot LLM call), an anti-hallucination citation layer, and a production-shaped approval workflow. Runs **fully keyless** for reviewers — in that mode it operates on a small set of **clearly-labeled fictional demo accounts** (a real demo, not real research). **Add keys (i.e. BYOK) for live research on real domains.**
 
 > Selling a (fictional) product, **Signalform** — *a product-signal platform that unifies product-usage data and CRM records so revenue teams act on the same buying signals.* Retarget the agent by editing `SELLER` in `lib/config.ts`.
 
@@ -30,6 +30,20 @@ Then **pick one of the fictional demo accounts** (Acme Cloud, Nimbus Health, or 
 With no `ANTHROPIC_API_KEY` the app is in **sample mode**: a deterministic **scripted model** replays a realistic research plan against canned fixtures, so the entire experience (streaming, ledger, synthesis, approval, dry-run enroll) works with zero keys. The catch — and the reason the UI says so loudly with a banner and a `SAMPLE` badge — is that the companies, people, and LinkedIn URLs are **fictional and illustrative only**; they won't resolve. Sample mode deliberately supports **only the three curated demo accounts** and refuses arbitrary domains, rather than fabricating plausible-but-fake data for a real company (that would be exactly the hallucination this tool exists to prevent).
 
 Set `ANTHROPIC_API_KEY` (+ provider keys) for **live mode**: the real Claude loop runs and can research any domain. See the table below for what's wired today.
+
+## Deploy on Railway
+
+The app deploys to [Railway](https://railway.com) with no code changes — Nixpacks
+auto-detects Next.js and runs `npm run build` then `npm run start` (which binds to
+Railway's injected `$PORT`). Build/deploy config is version-controlled in `railway.json`.
+
+1. **Connect** the GitHub repo as a new Railway service (Railway redeploys on every push to `main`).
+2. **Generate a public URL**: service → **Settings → Networking → Generate Domain** — a deployed Railway service is private until you do this.
+3. **Set the run mode**: service → **Variables** → add `FORCE_SAMPLE=1` to pin the free, deterministic **keyless sample demo** (the safe default for a public link — no secrets, no per-run cost). To run live Claude instead, set `ANTHROPIC_API_KEY` and omit `FORCE_SAMPLE`.
+
+Open the generated `*.up.railway.app` URL and run the keyless flow above. Note: the dry-run
+sequencer writes to Railway's **ephemeral** disk (`data/out/`), so those payload files don't
+persist across redeploys — the payload is shown in the UI regardless.
 
 ## How it works
 
